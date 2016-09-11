@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:util="http://www.springframework.org/schema/util"  
+	xmlns:jee="http://www.springframework.org/schema/jee" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa" 
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.3.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
+	<!-- mvc注解驱动支持 -->
+	<mvc:annotation-driven></mvc:annotation-driven>
+	<!-- 扫包 -->
+	<context:component-scan base-package="com.taojin"></context:component-scan>
+	<!-- 视图解析 -->
+	<bean id="viewResolver1" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/"></property>
+		<property name="suffix" value=".jsp"></property>
+	</bean>
+	<!-- 数据库配置文件 -->
+	<util:properties id="jdbc" location="classpath:db.properties"></util:properties>
+	<!-- 数据源 -->
+	<bean id="ds" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="#{jdbc.DRIVERCLASS}"></property>
+		<property name="jdbcUrl" value="#{jdbc.JDBCURL}"></property>
+		<property name="user" value="#{jdbc.USERNAME}"></property>
+		<property name="password" value="#{jdbc.PWD}"></property>
+		<property name="initialPoolSize" value="#{jdbc.INITIALSIZE}"></property>
+		<property name="minPoolSize" value="#{jdbc.MINSIZE}"></property>
+		<property name="maxPoolSize" value="#{jdbc.MAXSIZE}"></property>
+		<property name="acquireIncrement" value="#{jdbc.INCREMENT}"></property>
+		<property name="maxIdleTime" value="#{jdbc.IDLETIME}"></property>
+	</bean>
+	<!-- 扫描映射接口 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.taojin.dao"></property>
+	</bean>
+	<!-- session工厂和接口映射XML文件 -->
+	<bean id = "sqlSession" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="ds"></property>
+		<property name="mapperLocations" value="classpath:com/taojin/sql/*.xml"></property>
+	</bean>
+	<!-- 事务管理 -->
+	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="ds"></property>
+	</bean>
+	<!-- 事务驱动支持 -->
+	<tx:annotation-driven transaction-manager="txManager" proxy-target-class="true"/>
+	<!-- 启动aop支持 -->
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+	<!-- 处理访问jsp页面的拦截器配置 -->
+	<!-- 
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<bean class="com.taojin.interceptor.redirectJspRequestIntercepter"></bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+	-->
+	<!-- 控制器异常处理 -->
+	<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver"> 
+ 		<property name="exceptionMappings"> 
+			<props>
+				<prop key="java.lang.Exception">error</prop>
+			</props>
+		</property> 
+		<property name="statusCodes"> 
+			<props>
+				<prop key="error">500</prop>
+			</props>
+		</property> 
+		<property name="defaultErrorView" value="error"></property> 
+ 	</bean>
+	<!--以下是aop配置的bean -->
+</beans>

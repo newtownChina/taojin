@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"            
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.taojin.dao.GoodDao">
+	<select id="selectOne" parameterType="com.taojin.beans.Good"
+		resultType="com.taojin.beans.Good">
+			SELECT GID,UID,PRICE,PICTURE,TITLE,DESCRIPTION FROM good WHERE 1 = 1
+		<if test="gid != null and gid != ''">
+			AND GID = #{gid,jdbcType=INTEGER}
+		</if>
+		<if test="gid != null and gid != ''">
+			AND UID = #{uid,jdbcType=INTEGER}
+		</if>
+		<if test="price != null and price != ''">
+			AND PRICE = #{price,jdbcType=VARCHAR}
+		</if>
+		<if test="picture != null and picture != ''">
+			AND PICTURE = #{picture,jdbcType=VARCHAR}
+		</if>
+		<if test="title != null and title != ''">
+			AND TITLE = #{title,jdbcType=VARCHAR}
+		</if>
+		<if test="description != null and description != ''">
+			AND DESCRIPTION = #{description,jdbcType=VARCHAR}
+		</if>
+	</select>
+	<select id="selectAll" resultType="com.taojin.beans.Good">
+		SELECT GID,UID,PRICE,PICTURE,TITLE,DESCRIPTION FROM good
+	</select>
+	<select id="selectSome" resultType="com.taojin.beans.Good" parameterType="integer">
+		SELECT GID,UID,PRICE,PICTURE,TITLE,DESCRIPTION FROM good WHERE UID = #{uid,jdbcType=INTEGER}
+	</select>
+	
+	<select id="selectKeyWordGood" resultType="com.taojin.beans.Good">
+		SELECT GID,UID,PRICE,PICTURE,TITLE,DESCRIPTION FROM good where TITLE LIKE '%${keyword}%'
+	</select>
+	
+	<delete id="delete">
+		DELETE FROM good WHERE 1=1
+		<if test="gid != null and gid != ''">
+			AND GID = #{gid,jdbcType=INTEGER}
+		</if>
+	</delete>
+	<insert id="insert" parameterType="com.taojin.beans.Good" useGeneratedKeys="true" keyProperty="gid">
+		INSERT INTO good(
+			UID,
+			PRICE,
+			PICTURE,
+			TITLE,
+			DESCRIPTION
+		) VALUES (
+			#{uid,jdbcType=INTEGER},
+			#{price,jdbcType=FLOAT},
+			#{picture,jdbcType=VARCHAR},
+			#{title,jdbcType=VARCHAR},
+			#{description,jdbcType=VARCHAR}
+		)
+	</insert>
+	<update id="update" parameterType="com.taojin.beans.Good">
+		UPDATE good
+		<set>
+			<if test="uid != null and uid != ''">
+				UID = #{uid,jdbcType=INTEGER},
+			</if>
+			<if test="price != null and price != ''">
+				PRICE = #{price,jdbcType=FLOAT},
+			</if>
+			<if test="picture != null and picture != ''">
+				PICTURE = #{picture,jdbcType=VARCHAR},
+			</if>
+			<if test="title != null and title != ''">
+				TITLE = #{title,jdbcType=VARCHAR},
+			</if>
+			<if test="description != null and description != ''">
+				DESCRIPTION = #{description,jdbcType=VARCHAR}
+			</if>
+		</set>
+		WHERE GID = #{gid,jdbcType=INTEGER}
+	</update>
+</mapper>

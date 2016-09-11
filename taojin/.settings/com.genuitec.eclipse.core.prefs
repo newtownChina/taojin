@@ -1,0 +1,3 @@
+eclipse.preferences.version=1
+validator.Checked=WebRoot/uploadify/jquery.uploadify.min.js,src/com/taojin/controller/UploadPicController.java,WebRoot/uploadify/jquery.uploadify.js,WebRoot/js,src/db.properties
+validator.Unchecked=
